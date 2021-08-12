@@ -13,8 +13,8 @@ public interface CreditLineService {
 
     Mono<CreditLine> findById (String id);
 
-    Mono<CreditLineResponse> update(CreditLine creditLine);
+    Mono<CreditLineResponse> update(CreditLine creditLine, String id);
 
-    public Mono<String> delete (String id);
+    Mono<String> delete (String id);
 
 }
