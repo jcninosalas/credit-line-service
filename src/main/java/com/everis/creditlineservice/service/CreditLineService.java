@@ -10,7 +10,7 @@ public interface CreditLineService {
 
     Mono<CreditLineResponse> create (CreditLine creditLine);
 
-    Flux<CreditLine> findAll ();
+    Flux<CreditLine> findAll (String customerDocument);
 
     Mono<CreditLine> findById (String id);
 

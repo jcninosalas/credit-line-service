@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/credit-lines")
-@Slf4j
 public class CreditLineController {
 
     @Autowired
@@ -25,8 +24,8 @@ public class CreditLineController {
     }
 
     @GetMapping
-    public Flux<CreditLine> getAll() {
-        return service.findAll();
+    public Flux<CreditLine> getAll(@RequestParam String customerDocument) {
+        return service.findAll(customerDocument);
     }
 
     @GetMapping("/credit-line")

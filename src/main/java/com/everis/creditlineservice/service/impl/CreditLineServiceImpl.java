@@ -33,8 +33,10 @@ public class CreditLineServiceImpl implements CreditLineService {
     }
 
     @Override
-    public Flux<CreditLine> findAll() {
-        return repository.findAll();
+    public Flux<CreditLine> findAll(String customerDocument) {
+        //return repository.findAll();
+        return repository.findAllByCustomerDocument(customerDocument)
+                .switchIfEmpty(Mono.error(new CreditLineNotFoundException()));
     }
 
     @Override
@@ -51,7 +53,6 @@ public class CreditLineServiceImpl implements CreditLineService {
                 .flatMap(creditLineResponse)
                 .switchIfEmpty(Mono.error(new CreditLineNotFoundException()));
     }
-
 
     private final Function<CreditLine, CreditLine> openCreditLine = creditLine -> {
         creditLine.setActive(true);
@@ -72,10 +73,6 @@ public class CreditLineServiceImpl implements CreditLineService {
                 creditLineToUpdate.setId(creditLine.getId());
                 creditLineToUpdate.setModifiedAt(Date.from(Instant.now()));
                 creditLineToUpdate.setCreatedAt(creditLine.getCreatedAt());
-                creditLineToUpdate.setAvailableCredit(
-                        creditLineToUpdate.getAvailableCredit() == null ?
-                                creditLine.getAvailableCredit() : creditLineToUpdate.getAvailableCredit()
-                );
                 creditLineToUpdate.setActive(true);
                 log.info("actualizada : {}", creditLineToUpdate);
                 return creditLineToUpdate;

@@ -23,9 +23,7 @@ public class CreditLine {
     private String id;
 
     @NotNull(message = "El limite de credito debe ser mayor o igual a 0")
-    private BigDecimal creditLimit;
-
-    private BigDecimal availableCredit;
+    private BigDecimal creditAmmount;
 
     @NotNull
     @Size(min = 8, message = "El numero de documento requiere minimo 8 digitos")
