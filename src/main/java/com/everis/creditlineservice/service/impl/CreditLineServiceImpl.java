@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -42,31 +43,13 @@ public class CreditLineServiceImpl implements CreditLineService {
                 .switchIfEmpty(Mono.error(new CreditLineNotFoundException()));
     }
 
-    //Refactorizar
     @Override
     public Mono<CreditLineResponse> update(CreditLine creditLine, String id) {
         return repository.findById(id)
-                .flatMap( oldCreditLine -> {
-                        creditLine.setId(oldCreditLine.getId());
-                        creditLine.setModifiedAt(new Date());
-                        return repository.save(creditLine);
-                    })
-                .flatMap( c -> Mono.just(new CreditLineResponse(
-                        "Registro actualizado",
-                        HttpStatus.OK,
-                        Map.of("creditLine:", c)
-                )));
-    }
-
-    @Override
-    public Mono<String> delete(String id) {
-        return repository.findById(id)
-                .flatMap( creditLine -> {
-                    creditLine.setActive(false);
-                    repository.save(creditLine).subscribe();
-                    return Mono.just("Linea de credito cancelada");
-                })
-                .defaultIfEmpty("Registro no encontrado");
+                .map( c -> updateCreditLine.apply(c, creditLine))
+                .flatMap(repository::save)
+                .flatMap(creditLineResponse)
+                .switchIfEmpty(Mono.error(new CreditLineNotFoundException()));
     }
 
 
@@ -83,5 +66,18 @@ public class CreditLineServiceImpl implements CreditLineService {
                 Map.of("creditLine", creditLine)
     ));
 
-
+    private final BiFunction<CreditLine, CreditLine, CreditLine> updateCreditLine =
+            (creditLine, creditLineToUpdate) -> {
+                log.info("para actualizar : {}", creditLineToUpdate);
+                creditLineToUpdate.setId(creditLine.getId());
+                creditLineToUpdate.setModifiedAt(Date.from(Instant.now()));
+                creditLineToUpdate.setCreatedAt(creditLine.getCreatedAt());
+                creditLineToUpdate.setAvailableCredit(
+                        creditLineToUpdate.getAvailableCredit() == null ?
+                                creditLine.getAvailableCredit() : creditLineToUpdate.getAvailableCredit()
+                );
+                creditLineToUpdate.setActive(true);
+                log.info("actualizada : {}", creditLineToUpdate);
+                return creditLineToUpdate;
+            };
 }
