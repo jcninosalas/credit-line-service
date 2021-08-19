@@ -4,17 +4,14 @@ import com.everis.creditlineservice.model.CreditLine;
 import com.everis.creditlineservice.model.CreditLineResponse;
 import com.everis.creditlineservice.service.CreditLineService;
 import javax.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/credit-lines")
 public class CreditLineController {
-
     @Autowired
     private CreditLineService service;
 

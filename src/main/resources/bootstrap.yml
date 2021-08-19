@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: credit-line-service
+
+  cloud:
+    config:
+      uri: https://ms-config-server.azurewebsites.net

@@ -34,7 +34,6 @@ public class CreditLineServiceImpl implements CreditLineService {
 
     @Override
     public Flux<CreditLine> findAll(String customerDocument) {
-        //return repository.findAll();
         return repository.findAllByCustomerDocument(customerDocument)
                 .switchIfEmpty(Mono.error(new CreditLineNotFoundException()));
     }
